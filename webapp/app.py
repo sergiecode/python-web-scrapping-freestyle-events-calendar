@@ -115,6 +115,11 @@ def index():
                              stats={'total_eventos': 0, 'proximos_eventos': 0},
                              error="Error cargando eventos")
 
+@app.route('/test')
+def test_page():
+    """Test page for API debugging"""
+    return render_template('api_test.html')
+
 @app.route('/api/eventos')
 def api_eventos():
     """API REST para obtener eventos"""
@@ -134,14 +139,14 @@ def api_eventos():
         return jsonify({
             'success': True,
             'total': len(events),
-            'events': events
+            'eventos': events
         })
     
     except Exception as e:
         return jsonify({
             'success': False,
             'error': str(e),
-            'events': []
+            'eventos': []
         }), 500
 
 @app.route('/api/stats')

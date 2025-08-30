@@ -5,7 +5,6 @@ Desarrollado por Sergie Code
 
 import sqlite3
 import pandas as pd
-import csv
 import os
 from datetime import datetime
 from typing import List, Dict, Any
@@ -153,9 +152,14 @@ class ScrapingUtils:
         
         for fmt in formats:
             try:
-                dt = datetime.strptime(date_clean, fmt.lower())
-                return dt.strftime("%Y-%m-%d")
-            except ValueError:
+                # Try both original and cleaned strings
+                for test_string in [date_string, date_clean]:
+                    try:
+                        dt = datetime.strptime(test_string, fmt)
+                        return dt.strftime("%Y-%m-%d")
+                    except ValueError:
+                        continue
+            except:
                 continue
         
         return date_string
@@ -179,5 +183,8 @@ def log_scraping_result(scraper_name: str, events_count: int, success: bool = Tr
 
 def validate_event(event: Dict[str, Any]) -> bool:
     """Valida que un evento tenga los campos mínimos requeridos"""
+    if not event or not isinstance(event, dict):
+        return False
+    
     required_fields = ['nombre', 'fecha', 'organizador']
     return all(event.get(field) for field in required_fields)
